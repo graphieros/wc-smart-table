@@ -61,6 +61,7 @@ Provide a JSON format of an array of objects.
 Every td attribute must contain an array in the same order as your header.
 Here is the datastructure, for a table with 2 columns, one "text" and one "numeric"
 
+```
 "[
     {
         td: [
@@ -87,10 +88,13 @@ Here is the datastructure, for a table with 2 columns, one "text" and one "numer
         ]
     },
 ]"
+```
 
 Now let's say you want to provide a third column, with percentages based on the second column.
 Setup your header for the third column with "isPercentage": true, and "percentageTo": "spend" (example name for your second column)
 Since percentages will be calculated by wc-smart-table, you must provide an empty string inside your dataset:
+
+```
 
 "[
     {
@@ -122,10 +126,14 @@ Since percentages will be calculated by wc-smart-table, you must provide an empt
         ]
     },
 ]"
+```
+
 
 ### translations
 This prop lets you adapt translations for labels used on wc-smart-table.
 Here are the default labels, you can override by passing your own JSON configuration:
+
+```
 
 "{
     "average": "Average",
@@ -147,10 +155,15 @@ Here are the default labels, you can override by passing your own JSON configura
     "total": 'Total',
     "totalRows": "Total rows"
 }"
+```
 
 ### Other optional props
-max-height: string, (defaults to "500px". You can use any css height, like "calc(100vh - 200px)" for example)
-font-family: "inherit", (defaults to "inherit")
-rows-per-page: 25, (defaults to 25. Over 200 can slightly affect performance)
-use-chart: string, (defaults to "true". Use false if for some reason you don't want to use charts)
-locale: string, (defaults to "fr-fr", used for date formatting)
+- max-height: string, (defaults to "500px". You can use any css height, like "calc(100vh - 200px)" for example)
+
+- font-family: "inherit", (defaults to "inherit")
+
+- rows-per-page: 25, (defaults to 25. Over 200 can slightly affect performance)
+
+- use-chart: string, (defaults to "true". Use false if for some reason you don't want to use charts)
+
+- locale: string, (defaults to "fr-fr", used for date formatting)

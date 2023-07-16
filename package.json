@@ -1,8 +1,9 @@
 {
   "name": "wc-smart-table",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "0.0.1",
   "type": "module",
+  "main": "dist/wc-smart-table.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -15,5 +16,8 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
     "vite": "^4.4.0"
-  }
+  },
+  "files": [
+    "dist/wc-smart-table.js"
+  ]
 }

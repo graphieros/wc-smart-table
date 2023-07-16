@@ -307,29 +307,29 @@
                         <td 
                             v-for="(td, j) in tr.td" 
                             :key="`td_${i}_${j}`"
-                            :style="isNumeric(td) || header[j].type === constants.DATE ? `text-align:right;font-variant-numeric: tabular-nums;` : ''"
+                            :style="isNumeric(td) || headRef[j].type === constants.DATE ? `text-align:right;font-variant-numeric: tabular-nums;` : ''"
                             @click="selectTd({
                                 td,
                                 rowIndex: i,
                                 colIndex: j,
-                                headerType: header[j].type,
+                                headerType: headRef[j].type,
                                 event: $event
                             })"
                             @keyup.enter="selectTd({
                                 td,
                                 rowIndex: i,
                                 colIndex: j,
-                                headerType: header[j].type,
+                                headerType: headRef[j].type,
                                 event: $event
                             })"
                             @keyup.space="selectTd({
                                 td,
                                 rowIndex: i,
                                 colIndex: j,
-                                headerType: header[j].type,
+                                headerType: headRef[j].type,
                                 event: $event
                             })"
-                            :class="{'td-numeric': header[j].type === constants.NUMERIC, 'td-focusable': true, 'td-has-nan': hasNaN[j]}"
+                            :class="{'td-numeric': headRef[j].type === constants.NUMERIC, 'td-focusable': true, 'td-has-nan': hasNaN[j]}"
                             :id="`cell_${i}_${j}`"
                             tabindex="0"
                         >
@@ -341,40 +341,40 @@
                             />
 
                             <!-- DATE -->
-                            <span v-if="header[j].type === constants.DATE">
-                                {{ header[j].prefix }} 
+                            <span v-if="headRef[j].type === constants.DATE">
+                                {{ headRef[j].prefix }} 
                                 {{ new Date(td).toLocaleString().slice(0,10) }} 
-                                {{ header[j].suffix }}
+                                {{ headRef[j].suffix }}
                             </span>
 
                             <!-- PERCENTAGE -->
-                            <span v-else-if="header[j].isPercentage">
-                                {{ Number((td * 100).toFixed(header[j].decimals)).toLocaleString() }}% 
+                            <span v-else-if="headRef[j].isPercentage">
+                                {{ Number((td * 100).toFixed(headRef[j].decimals)).toLocaleString() }}% 
                             </span>
 
                             <!-- NUMERIC VALUE WITH PERCENTAGE TO SUM OF ANOTHER COL -->
                             <span 
-                                v-else-if="(percentages[j] && header[j].percentageTo && !header[j].isPercentage)" 
+                                v-else-if="(percentages[j] && headRef[j].percentageTo && !headRef[j].isPercentage)" 
                                 :class="{'td-nan': isNaN(Number(td))}"
                             >
-                               {{ header[j].prefix }} 
-                               {{ isNaN(Number(td)) ? `${td} is not ${constants.NUMERIC}` : Number(td.toFixed(header[j].decimals)).toLocaleString() }} 
-                               {{ header[j].suffix }} 
-                               ({{ isNaN(Number(td)) ? '' : Number((td / getSum(percentages[j].referenceIndex) * 100).toFixed(header[j].decimals)).toLocaleString() }}%)
+                               {{ headRef[j].prefix }} 
+                               {{ isNaN(Number(td)) ? `${td} is not ${constants.NUMERIC}` : Number(td.toFixed(headRef[j].decimals)).toLocaleString() }} 
+                               {{ headRef[j].suffix }} 
+                               ({{ isNaN(Number(td)) ? '' : Number((td / getSum(percentages[j].referenceIndex) * 100).toFixed(headRef[j].decimals)).toLocaleString() }}%)
                             </span>
 
                             <!-- NUMERIC -->
-                            <span v-else-if="header[j].type === constants.NUMERIC" :class="{'td-nan': isNaN(Number(td))}">
-                               {{ header[j].prefix }} 
-                               {{ isNaN(Number(td)) ? `${td} is not ${constants.NUMERIC}` : Number(td.toFixed(header[j].decimals)).toLocaleString() }} 
-                               {{ header[j].suffix }}
+                            <span v-else-if="headRef[j].type === constants.NUMERIC" :class="{'td-nan': isNaN(Number(td))}">
+                               {{ headRef[j].prefix }} 
+                               {{ isNaN(Number(td)) ? `${td} is not ${constants.NUMERIC}` : Number(td.toFixed(headRef[j].decimals)).toLocaleString() }} 
+                               {{ headRef[j].suffix }}
                             </span>
 
                             <!-- ALL OTHER -->
                             <span v-else>
-                                {{ header[j].prefix }} 
+                                {{ headRef[j].prefix }} 
                                 {{ td }} 
-                                {{ header[j].suffix }}
+                                {{ headRef[j].suffix }}
                             </span>
                         </td>
                     </tr>
@@ -391,9 +391,9 @@
                 <span>
                     <!-- NAME OF SELECTED COLUMN -->
                     <b>
-                        {{ header[currentSelectionSpan.col].name }} 
-                        <span v-if="header[currentSelectionSpan.col].isPercentage">
-                            / {{ header[percentages[currentSelectionSpan.col].referenceIndex].name }}
+                        {{ headRef[currentSelectionSpan.col].name }} 
+                        <span v-if="headRef[currentSelectionSpan.col].isPercentage">
+                            / {{ headRef[percentages[currentSelectionSpan.col].referenceIndex].name }}
                         </span>
                     </b>
 
@@ -405,29 +405,29 @@
                     <!-- SUM OF SELECTED CELLS -->
                     <span style="margin-left: 12px">
                         {{ parsedTranslations.sum }} : 
-                        <b class="format-num" v-if="header[currentSelectionSpan.col].isPercentage">
+                        <b class="format-num" v-if="headRef[currentSelectionSpan.col].isPercentage">
                             {{selectedCellsCalculations.sumPercentage }}
                         </b>
                         <b v-else class="format-num">
-                            {{ header[currentSelectionSpan.col].prefix }}
+                            {{ headRef[currentSelectionSpan.col].prefix }}
                             {{ selectedCellsCalculations.sumRegular }} 
-                            {{ header[currentSelectionSpan.col].suffix }}
+                            {{ headRef[currentSelectionSpan.col].suffix }}
                         </b>
-                        <b v-if="header[currentSelectionSpan.col].isPercentage">%</b>
+                        <b v-if="headRef[currentSelectionSpan.col].isPercentage">%</b>
                     </span>
 
                     <!-- AVERAGE OF SELECTED CELLS -->
                     <span style="margin-left: 12px">
                         {{ parsedTranslations.average }} : 
-                        <b v-if="header[currentSelectionSpan.col].isPercentage" class="format-num">
+                        <b v-if="headRef[currentSelectionSpan.col].isPercentage" class="format-num">
                             {{ selectedCellsCalculations.averagePercentage }}
                         </b>
                         <b v-else class="format-num">
-                            {{ header[currentSelectionSpan.col].prefix }} 
+                            {{ headRef[currentSelectionSpan.col].prefix }} 
                             {{ selectedCellsCalculations.averageRegular }} 
-                            {{ header[currentSelectionSpan.col].suffix }}
+                            {{ headRef[currentSelectionSpan.col].suffix }}
                         </b>
-                        <b v-if="header[currentSelectionSpan.col].isPercentage">%</b>
+                        <b v-if="headRef[currentSelectionSpan.col].isPercentage">%</b>
                     </span>
                 </span>
                 <button 
@@ -558,9 +558,9 @@
 
             <!-- CHART TITLE -->
             <div style="margin-bottom:12px">
-                <b>{{ JSON.parse(header)[currentSelectionSpan.col].name }} 
-                    <span v-if="JSON.parse(header)[currentSelectionSpan.col].isPercentage && JSON.parse(header)[currentSelectionSpan.col].percentageTo">
-                        / {{ JSON.parse(header)[percentages[currentSelectionSpan.col].referenceIndex].name }}
+                <b>{{ headRef[currentSelectionSpan.col].name }} 
+                    <span v-if="headRef[currentSelectionSpan.col].isPercentage && headRef[currentSelectionSpan.col].percentageTo">
+                        / {{ headRef[percentages[currentSelectionSpan.col].referenceIndex].name }}
                     </span>
                     <span v-if="chart.type === constants.DONUT && selectedDonutCategory && selectedDonutCategory.name">
                         {{ parsedTranslations.by }}
@@ -580,22 +580,20 @@
                             {{ parsedTranslations.chooseCategoryColumn }}
                         </legend>
                         <div class="smart-table-fieldset-wrapper">
-                            <template>
-                                <div class="smart-table-fieldset-option"  v-for="(option, i) in availableDonutCategories" :key="`donut_radio_${i}`">
-                                    <input
-                                        type="radio"
-                                        :name="option.name"
-                                        :id="option.name"
-                                        :checked="selectedDonutCategory && option.name === selectedDonutCategory.name"
-                                        @input="selectedDonutCategory = availableDonutCategories[i]"
-                                    />
-                                    <label 
-                                        :for="option.name"
-                                    >
-                                        {{ option.name }}
-                                    </label>
-                                </div>
-                            </template>
+                            <div class="smart-table-fieldset-option"  v-for="(option, i) in availableDonutCategories" :key="`donut_radio_${i}`">
+                                <input
+                                    type="radio"
+                                    :name="option.name"
+                                    :id="option.name"
+                                    :checked="selectedDonutCategory && option.name === selectedDonutCategory.name"
+                                    @input="selectedDonutCategory = availableDonutCategories[i]"
+                                />
+                                <label 
+                                    :for="option.name"
+                                >
+                                    {{ option.name }}
+                                </label>
+                            </div>
                         </div>
                         <button class="smart-table-generate-donut" :disabled="!selectedDonutCategory" @click="applyDonutOption">
                             <div style="margin-bottom: -3px" v-html="icons.donut"/>
@@ -682,7 +680,7 @@
                                 >
                                     <div style="width:100%;text-align:center;font-size:20px">
                                         {{ plot.prefix }} 
-                                        {{ Number(plot.value.toFixed(JSON.parse(header)[currentSelectionSpan.col].decimals)).toLocaleString() }}
+                                        {{ Number(plot.value.toFixed(headRef[currentSelectionSpan.col].decimals)).toLocaleString() }}
                                         {{ plot.suffix }}
                                     </div>
                                 </foreignObject>
@@ -731,7 +729,7 @@
                                 >
                                     <div style="width:100%;text-align:center;font-size:20px">
                                         {{ plot.prefix }} 
-                                        {{ Number(plot.value.toFixed(JSON.parse(header)[currentSelectionSpan.col].decimals)).toLocaleString() }} 
+                                        {{ Number(plot.value.toFixed(headRef[currentSelectionSpan.col].decimals)).toLocaleString() }} 
                                         {{ plot.suffix }}
                                     </div>
                                 </foreignObject>
@@ -799,19 +797,19 @@
                             {{ parsedTranslations.total }}
                         </text>
                         <text :x="50" :y="48" text-anchor="middle" font-size="4">
-                            {{ JSON.parse(header)[currentSelectionSpan.col].prefix }}
+                            {{ headRef[currentSelectionSpan.col].prefix }}
                             {{ donutHollowLabels.total }}
-                            {{ JSON.parse(header)[currentSelectionSpan.col].isPercentage ? '%' : '' }}
-                            {{ JSON.parse(header)[currentSelectionSpan.col].suffix }}
+                            {{ headRef[currentSelectionSpan.col].isPercentage ? '%' : '' }}
+                            {{ headRef[currentSelectionSpan.col].suffix }}
                         </text>
                         <text :x="50" :y="56" text-anchor="middle" font-size="6">
                             {{ parsedTranslations.average }}
                         </text>
                         <text :x="50" :y="62" text-anchor="middle" font-size="4">
-                            {{ JSON.parse(header)[currentSelectionSpan.col].prefix }}
+                            {{ headRef[currentSelectionSpan.col].prefix }}
                             {{ donutHollowLabels.average }}
-                            {{ JSON.parse(header)[currentSelectionSpan.col].isPercentage ? '%' : '' }}
-                            {{ JSON.parse(header)[currentSelectionSpan.col].suffix }}
+                            {{ headRef[currentSelectionSpan.col].isPercentage ? '%' : '' }}
+                            {{ headRef[currentSelectionSpan.col].suffix }}
                         </text>
                     </svg>
 
@@ -825,10 +823,10 @@
                             <span :style="`color:${legendItem.color}`">●</span>
                             <span>{{ legendItem.name }} : </span>
                             <b>
-                                {{ JSON.parse(header)[currentSelectionSpan.col].prefix }}
+                                {{ headRef[currentSelectionSpan.col].prefix }}
                                 {{ getDonutLegendValue(legendItem.value) }}
-                                {{ JSON.parse(header)[currentSelectionSpan.col].isPercentage ? '%' : '' }}
-                                {{ JSON.parse(header)[currentSelectionSpan.col].suffix }}
+                                {{ headRef[currentSelectionSpan.col].isPercentage ? '%' : '' }}
+                                {{ headRef[currentSelectionSpan.col].suffix }}
                             </b>
                             <span>({{ (legendItem.proportion * 100).toFixed(1) }}%)</span>
                         </div>
@@ -917,7 +915,7 @@ export default {
             type: Object,
             default() {
                 return JSON.stringify({
-                    average: "Moyenne",
+                    average: "Average",
                     by: "by",
                     chooseCategoryColumn: "Choose category column",
                     exportAllButton: "XLSX all",
@@ -988,6 +986,7 @@ export default {
             dates: {},
             filteredDatesIndexes: {},
             hasNaN: {},
+            headRef: JSON.parse(this.header),
             iconColor: "#2D353C",
             iconSize: 20,
             immutableRangeFilters: {},
@@ -1062,13 +1061,12 @@ export default {
                     type: head.type, // this attribute is mandatory
                 }
             }),
-            parsedTranslations: JSON.parse(this.translations)
+            parsedTranslations: JSON.parse(this.translations),
         }
     },
     mounted(){
-        console.log(this.$el.shadowRoot)
-        if(JSON.parse(this.header).length === 0) {
-            throw new Error("SmartTable error: missing header data.\nProvide an array of objects of type:\n{\n name: string;\n type: string; ('text' | 'numeric' | 'date')\n average: boolean;\n decimals: number | undefined;\n sum: boolean;\n isSort:boolean;\n isSearch: boolean;\n isMultiselect: boolean;\n isPercentage: boolean;\n percentageTo: string; (or '')\n}");
+        if(this.headRef.length === 0) {
+            throw new Error("SmartTable error: missing header data.\nProvide a JSON format with an array of objects of type:\n{\n name: string;\n type: string; ('text' | 'numeric' | 'date')\n average: boolean;\n decimals: number | undefined;\n sum: boolean;\n isSort:boolean;\n isSearch: boolean;\n isMultiselect: boolean;\n isPercentage: boolean;\n percentageTo: string; (or '')\n}");
         }
         if(JSON.parse(this.body).length === 0) {
             throw new Error("SmartTable error: missing body data");
@@ -1084,7 +1082,6 @@ export default {
         });
         this.$el.addEventListener("keydown", (e) => {
             const focusedElement = this.$el.activeElement;
-            console.log(focusedElement);
             const isTableCellFocused = focusedElement && Array.from(focusedElement.classList).includes('td-focusable');
 
             if (isTableCellFocused && e.key.includes("Arrow") || e.code === 'Space') {
@@ -1101,20 +1098,20 @@ export default {
                     chart.onmousedown = this.dragMouseDown;
                 })
             }
-        }
+        },
     },
     computed: {
         availableDonutCategories() {
             return Object.keys(this.multiselects).map(index => {
                 return {
                     index,
-                    name: JSON.parse(this.header)[index].name,
+                    name: this.headRef[index].name,
                     options: this.multiselects[index],
                 }
             })
         },
         canChart() {
-            return this.useChart && this.currentSelectionSpan.rows.length > 1;
+            return this.computedProps.useChart && this.currentSelectionSpan.rows.length > 1;
         },
         chartData() {
             if(!this.canChart) return [];
@@ -1124,28 +1121,33 @@ export default {
             const items = this.currentSelectionSpan.rows.length;
             const slot = width / items;
             const max = Math.max(...this.currentSelectionSpan.rows.map(row => row.value));
-            const isPercentage = JSON.parse(this.header)[this.currentSelectionSpan.col].isPercentage;
+            const isPercentage = this.headRef[this.currentSelectionSpan.col].isPercentage;
             const plots = this.currentSelectionSpan.rows.map((row, i) => {
                 return {
                     x: (slot * i) + slot / 2,
                     y: (1 - (row.value / max)) * height,
                     value: isPercentage ? row.value * 100 : row.value,
-                    suffix: isPercentage ? '%' : JSON.parse(this.header)[this.currentSelectionSpan.col].suffix ? JSON.parse(this.header)[this.currentSelectionSpan.col].suffix : '',
-                    prefix: JSON.parse(this.header)[this.currentSelectionSpan.col].prefix ? JSON.parse(this.header)[this.currentSelectionSpan.col].prefix : '',
+                    suffix: isPercentage ? '%' : this.headRef[this.currentSelectionSpan.col].suffix ? this.headRef[this.currentSelectionSpan.col].suffix : '',
+                    prefix: this.headRef[this.currentSelectionSpan.col].prefix ? this.headRef[this.currentSelectionSpan.col].prefix : '',
                     index: row.index
                 }
             });
 
             return {plots, slot, progression: plots.length >= 2 ? this.calcChartProgression(plots) : false };
         },
+        computedProps() {
+            return {
+                useChart: ['true', true].includes(this.useChart)
+            }
+        },
         donutHollowLabels() {
             return {
-                total: Number((this.currentDonut.map(el => el.value).reduce((a, b) => a + b, 0) * (JSON.parse(this.header)[this.currentSelectionSpan.col].isPercentage ? 100 : 1)).toFixed(JSON.parse(this.header)[this.currentSelectionSpan.col].decimals) ).toLocaleString(),
-                average: Number((this.currentDonut.map(el => el.value).reduce((a, b) => a + b, 0) / this.currentSelectionSpan.rows.length * (JSON.parse(this.header)[this.currentSelectionSpan.col].isPercentage ? 100 : 1)).toFixed(JSON.parse(this.header)[this.currentSelectionSpan.col].decimals)).toLocaleString()
+                total: Number((this.currentDonut.map(el => el.value).reduce((a, b) => a + b, 0) * (this.headRef[this.currentSelectionSpan.col].isPercentage ? 100 : 1)).toFixed(this.headRef[this.currentSelectionSpan.col].decimals) ).toLocaleString(),
+                average: Number((this.currentDonut.map(el => el.value).reduce((a, b) => a + b, 0) / this.currentSelectionSpan.rows.length * (this.headRef[this.currentSelectionSpan.col].isPercentage ? 100 : 1)).toFixed(this.headRef[this.currentSelectionSpan.col].decimals)).toLocaleString()
             }
         },
         hasNumericTypes() {
-            return JSON.parse(this.header).map(h => h.type).includes(this.constants.NUMERIC);
+            return this.headRef.map(h => h.type).includes(this.constants.NUMERIC);
         },
         icons() {
             return {
@@ -1183,10 +1185,10 @@ export default {
         },
         selectedCellsCalculations() {
             return {
-                sumPercentage: Number((this.currentSelectionSpan.rows.map(r => r.value).reduce((a,b) => a + b, 0) * 100).toFixed(JSON.parse(this.header)[this.currentSelectionSpan.col].decimals)).toLocaleString(),
-                sumRegular: Number(this.currentSelectionSpan.rows.map(r => r.value).reduce((a,b) => a + b, 0).toFixed(JSON.parse(this.header)[this.currentSelectionSpan.col].decimals)).toLocaleString(),
-                averagePercentage: Number((this.currentSelectionSpan.rows.map(r => r.value).reduce((a,b) => a + b, 0) / this.currentSelectionSpan.rows.length * 100).toFixed(JSON.parse(this.header)[this.currentSelectionSpan.col].decimals)).toLocaleString(),
-                averageRegular: Number((this.currentSelectionSpan.rows.map(r => r.value).reduce((a,b) => a + b, 0) / this.currentSelectionSpan.rows.length).toFixed(JSON.parse(this.header)[this.currentSelectionSpan.col].decimals)).toLocaleString()
+                sumPercentage: Number((this.currentSelectionSpan.rows.map(r => r.value).reduce((a,b) => a + b, 0) * 100).toFixed(this.headRef[this.currentSelectionSpan.col].decimals)).toLocaleString(),
+                sumRegular: Number(this.currentSelectionSpan.rows.map(r => r.value).reduce((a,b) => a + b, 0).toFixed(this.headRef[this.currentSelectionSpan.col].decimals)).toLocaleString(),
+                averagePercentage: Number((this.currentSelectionSpan.rows.map(r => r.value).reduce((a,b) => a + b, 0) / this.currentSelectionSpan.rows.length * 100).toFixed(this.headRef[this.currentSelectionSpan.col].decimals)).toLocaleString(),
+                averageRegular: Number((this.currentSelectionSpan.rows.map(r => r.value).reduce((a,b) => a + b, 0) / this.currentSelectionSpan.rows.length).toFixed(this.headRef[this.currentSelectionSpan.col].decimals)).toLocaleString()
             }
         },
         visibleRows() {
@@ -1216,7 +1218,7 @@ export default {
             return !this.hasNaN[colIndex] && (th.isSort || th.isSearch || th.isMultiselect || th.rangeFilter) && ![this.constants.DATE].includes(th.type);
         },
         createXls(selection = 'all') {
-            const head = JSON.parse(this.header).map(h => h.name);
+            const head = this.headRef.map(h => h.name);
             const body = selection === 'all' ? this.bodyCopy.map(b => b.td) : this.visibleRows.map(r => r.td);
             const table = [head].concat(body);
 
@@ -1325,7 +1327,7 @@ export default {
             }
         },
         getDonutLegendValue(value) {
-            return Number((value * (JSON.parse(this.header)[this.currentSelectionSpan.col].isPercentage ? 100 : 1)).toFixed(JSON.parse(this.header)[this.currentSelectionSpan.col].decimals)).toLocaleString();
+            return Number((value * (this.headRef[this.currentSelectionSpan.col].isPercentage ? 100 : 1)).toFixed(this.headRef[this.currentSelectionSpan.col].decimals)).toLocaleString();
         },
         getDropdownOptions(index) {
             return [...new Set(JSON.parse(this.body).map(el => {
@@ -1467,10 +1469,6 @@ export default {
             nextCell.focus();
             nextCell.scrollIntoView({ behavior:"smooth", block:"center" });
         },
-        openDonutOptions() {
-            this.selectedDonutCategory = this.availableDonutCategories[0]
-            this.showDonutOptions = true;
-        },
         placeLabelOnTopOrBottom({previousPlot, currentPlot, nextPlot}) {
             const top = currentPlot.y - 38;
             const bottom = currentPlot.y + 16;
@@ -1528,7 +1526,7 @@ export default {
                     if(th.isPercentage || th.percentageTo) {
                         Object.assign(this.percentages, {[i]: {
                             reference: th.percentageTo,
-                            referenceIndex: JSON.parse(this.header).map(el => el.name).indexOf(th.percentageTo)
+                            referenceIndex: this.headRef.map(el => el.name).indexOf(th.percentageTo)
                         }});
                     }
 
@@ -1544,7 +1542,7 @@ export default {
                     }
 
                     if(th.isPercentage) {
-                        const baseIndex = JSON.parse(this.header).map(el => el.name).indexOf(th.percentageTo);
+                        const baseIndex = this.headRef.map(el => el.name).indexOf(th.percentageTo);
                         const sum = JSON.parse(this.body).map(el => el.td[baseIndex]).reduce((a,b) => a + b, 0);
                         searchHelper.push([i, baseIndex, sum]);
                     }
@@ -1562,13 +1560,13 @@ export default {
                     // Implements a sorting index for each column type
                     // Also applied on tableBody as it is used when reseting filters to initial state
                     el.td.forEach((td, i) => {
-                        if(JSON.parse(this.header)[i].type === this.constants.TEXT && JSON.parse(this.header)[i].isSearch) {
+                        if(this.headRef[i].type === this.constants.TEXT && this.headRef[i].isSearch) {
                             el[i] = this.stringToNumber(td);
                         }
-                        if(JSON.parse(this.header)[i].type === this.constants.DATE) {
+                        if(this.headRef[i].type === this.constants.DATE) {
                             el[i] = new Date(td).getTime();
                         }
-                        if(JSON.parse(this.header)[i].type === this.constants.NUMERIC) {
+                        if(this.headRef[i].type === this.constants.NUMERIC) {
                             el[i] = isNaN(Number(td)) ? i : td;
                         }
                         this.tableBody[index][i] = el[i];
@@ -1748,7 +1746,7 @@ export default {
                 this.sortByNumber(this.bodyCopy, this.currentFilter);
             }
             // percentage calculation
-            JSON.parse(this.header).forEach((col, i) => {
+            this.headRef.forEach((col, i) => {
                 if(col.isPercentage) {
                     const referenceIndex = this.percentages[i].referenceIndex;
                     const sum = this.bodyCopy.map(el => el.td[referenceIndex]).reduce((a,b) => a + b, 0);

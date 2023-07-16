@@ -2,6 +2,7 @@
   "name": "wc-smart-table",
   "description": "A web component to display your data in a smart table, empowering users to filter, sort, create charts, and export to Excel",
   "keywords": ["web component", "smart table", "table"],
+  "homepage": "https://smart-table.graphieros.com/",
   "author": "Alec Lloyd Probert",
   "repository": {
     "type": "git",
@@ -9,7 +10,7 @@
   },
   "license": "MIT",
   "private": false,
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "main": "dist/wc-smart-table.js",
   "scripts": {

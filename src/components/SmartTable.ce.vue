@@ -922,15 +922,15 @@ export default {
                     exportAllLabel: "Export all rows of your current filtered dataset",
                     exportPageButton: "XLSX page",
                     exportPageLabel: "Export rows of the current page",
-                    from: "Du",
+                    from: "From",
                     inputPlaceholder: "Search...",
                     makeDonut: "Generate",
                     nb: "Nb",
                     page: "Page",
                     paginatorLabel: "Rows per page",
                     sizeWarning: "Displaying too many rows at a time can lead to slower performance",
-                    sum: "Somme",
-                    to: "Au",
+                    sum: "Sum",
+                    to: "To",
                     total: 'Total',
                     totalRows: "Total rows",
                 })
@@ -1990,7 +1990,6 @@ export default {
     padding: 0px 12px 48px 12px;
     position: relative;
     width: calc(100% - 24px);
-    z-index: 100;
 }
 thead {
     position: sticky;

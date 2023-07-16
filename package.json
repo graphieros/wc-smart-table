@@ -1,7 +1,8 @@
 {
   "name": "wc-smart-table",
+  "description": "A web component to display your data in a smart table, empowering users to filter, sort, create charts, and export to Excel",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "dist/wc-smart-table.js",
   "scripts": {

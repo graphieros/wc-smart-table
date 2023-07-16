@@ -4,6 +4,10 @@ Are your dashboards so good that users still ask to export to Excel ?
 
 wc-smart-table is a web component that displays large datasets in a flexible table that offers readymade calculations and filtering options, avoiding the user to export the table to make their own averages or sums.
 
+wc-smart-table also provides a quick way to make a bar, line or donut chart on selected portions of the data.
+
+Of course, users can still also export to Excel as wc-smart-table provides this utility too ;)
+
 ## setup
 
 Include wc-smart-table.js in the head of your html:

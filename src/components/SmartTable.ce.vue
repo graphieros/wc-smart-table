@@ -1076,9 +1076,6 @@ export default {
         this.promiseWithAsyncFunction(this.prepareBodyCopy, () => {
             this.$forceUpdate();
             this.isLoading = false;
-            this.$nextTick(() => {
-                this.$el.querySelectorAll(".td-numeric")[0].focus();
-            })
         });
         this.$el.addEventListener("keydown", (e) => {
             const focusedElement = this.$el.activeElement;
@@ -2393,6 +2390,15 @@ th.col-selector--selected div {
     resize: horizontal;
     user-select: none;
     z-index: 10000;
+}
+
+@media screen and (max-width: 768px) {
+    .smart-table-chart-modal {
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%,-50%) !important;
+        max-width: 300px !important;
+    }
 }
 .smart-table-chart-svg{
     background: white;
